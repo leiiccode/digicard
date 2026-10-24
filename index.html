@@ -26,8 +26,24 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-tap-highlight-color: transparent;
+        }
+        html {
+            color-scheme: dark;
+        }
+        html:not(.dark) {
+            color-scheme: light;
+        }
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation-duration: 450ms;
+            animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            ::view-transition-old(root),
+            ::view-transition-new(root) {
+                animation-duration: 1ms;
+            }
         }
         .glass-card-dark {
             background: rgba(19, 28, 46, 0.82);
@@ -318,7 +334,7 @@
         lucide.createIcons();
 
         // Theme Toggle Function (Soft, Eye-Comfort Light Mode / Sleek Dark Mode)
-        function toggleTheme() {
+        function applyTheme() {
             const htmlEl = document.documentElement;
             const bodyBg = document.getElementById('body-bg');
             const mainCard = document.getElementById('main-card');
@@ -396,6 +412,14 @@
                 themeIcon.setAttribute('data-lucide', 'sun');
             }
             lucide.createIcons();
+        }
+
+        function toggleTheme() {
+            if (document.startViewTransition) {
+                document.startViewTransition(applyTheme);
+            } else {
+                applyTheme();
+            }
         }
 
         // Share Modal Functions
